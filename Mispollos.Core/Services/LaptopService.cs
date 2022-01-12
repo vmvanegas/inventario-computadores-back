@@ -30,13 +30,13 @@ namespace Mispollos.Application.Services
             if (!string.IsNullOrEmpty(search))
             {
                 result.Data = _laptopRepository
-                    .Query(x => x.Nombre.Contains(search))
+                    .Query(x => x.Responsable.Contains(search))
                     .OrderByDescending(x => x.UpdatedOn)
                     .Skip((page - 1) * 10)
                     .Take(10)
                     .ToList();
 
-                result.Total = await _laptopRepository.CountByQuery(x => x.Nombre.Contains(search));
+                result.Total = await _laptopRepository.CountByQuery(x => x.Responsable.Contains(search));
             }
             else
             {

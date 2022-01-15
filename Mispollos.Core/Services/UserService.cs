@@ -64,22 +64,21 @@ namespace Mispollos.Application.Services
 
         public Usuario GetUserById(Guid id)
         {
-            return _userRepository.Query().Include(x => x.Tienda).Include(x => x.Rol).FirstOrDefault(x => x.Id == id);
+            return _userRepository.Query().FirstOrDefault(x => x.Id == id);
         }
 
         public async Task CreateUser(Usuario user)
         {
-            user.IdRol = _appSettings.IdRolAdmin;
             user.Clave = StringExtension.HashPassword(user.Clave);
             user.CreatedOn = DateTime.Now;
             await _userRepository.AddAsync(user);
         }
 
-        public Boolean ValidateEmailExists(string email)
+        public Boolean ValidateUserNameExists(string nombreUsuario)
         {
-            var repeatedEmail = _userRepository.Query().FirstOrDefault(x => x.Correo == email);
+            var repeatedUserName = _userRepository.Query().FirstOrDefault(x => x.NombreDeUsuario == nombreUsuario);
 
-            return (repeatedEmail != null) ? true : false;
+            return (repeatedUserName != null) ? true : false;
         }
 
         public async Task UpdateUser(Usuario user)
@@ -100,38 +99,38 @@ namespace Mispollos.Application.Services
             await _userRepository.DeleteAsync(id);
         }
 
-        public Usuario GetUserByToken(Guid token)
-        {
-            return _userRepository.Query().FirstOrDefault(x => x.Token == token);
-        }
+        //public Usuario GetUserByToken(Guid token)
+        //{
+        //    return _userRepository.Query().FirstOrDefault(x => x.Token == token);
+        //}
 
-        public async Task CreateEmployee(Usuario user)
-        {
-            user.IdRol = _appSettings.IdRolUser;
-            Guid token = Guid.NewGuid();
-            user.TokenExpiration = DateTime.Now.AddDays(1);
-            user.Token = token;
-            user.Clave = StringExtension.HashPassword(user.Clave);
-            user.CreatedOn = DateTime.Now;
-            await _userRepository.AddAsync(user);
-            EmailService emailService = new EmailService();
-            emailService.Send(user.Correo, token, "generatedPasswordEmail", "Tu cuenta en Mispollos ha sido creada");
-        }
+        //public async Task CreateEmployee(Usuario user)
+        //{
+        //    user.IdRol = _appSettings.IdRolUser;
+        //    Guid token = Guid.NewGuid();
+        //    user.TokenExpiration = DateTime.Now.AddDays(1);
+        //    user.Token = token;
+        //    user.Clave = StringExtension.HashPassword(user.Clave);
+        //    user.CreatedOn = DateTime.Now;
+        //    await _userRepository.AddAsync(user);
+        //    EmailService emailService = new EmailService();
+        //    emailService.Send(user.Correo, token, "generatedPasswordEmail", "Tu cuenta en Mispollos ha sido creada");
+        //}
 
-        public async Task RecoverAccount(RecoverPasswordEmail email)
-        {
-            Usuario user = _userRepository.Query().FirstOrDefault(x => x.Correo == email.Email);
-            user.TokenExpiration = DateTime.Now.AddDays(1);
-            user.Token = Guid.NewGuid();
-            await _userRepository.UpdateAsync(user);
-            EmailService emailService = new EmailService();
-            emailService.Send(user.Correo, user.Token, "recoverPasswordEmail", "Solicitud de recuperacion de contraseña");
-        }
+        //public async Task RecoverAccount(RecoverPasswordEmail email)
+        //{
+        //    Usuario user = _userRepository.Query().FirstOrDefault(x => x.Correo == email.Email);
+        //    user.TokenExpiration = DateTime.Now.AddDays(1);
+        //    user.Token = Guid.NewGuid();
+        //    await _userRepository.UpdateAsync(user);
+        //    EmailService emailService = new EmailService();
+        //    emailService.Send(user.Correo, user.Token, "recoverPasswordEmail", "Solicitud de recuperacion de contraseña");
+        //}
 
         public Usuario AuthenticateUser(Authenticate userCredentials)
         {
-            userCredentials.Password = StringExtension.HashPassword(userCredentials.Password);
-            return _userRepository.Query().Include(x => x.Rol).FirstOrDefault(x => x.Correo == userCredentials.Email && x.Clave == userCredentials.Password);
+            userCredentials.Clave = StringExtension.HashPassword(userCredentials.Clave);
+            return _userRepository.Query().FirstOrDefault(x => x.NombreDeUsuario == userCredentials.NombreDeUsuario && x.Clave == userCredentials.Clave);
         }
 
         public AuthenticatedUserInfo GenerateJwt(Usuario user)
@@ -143,7 +142,6 @@ namespace Mispollos.Application.Services
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Name, user.Id.ToString()),
-                    new Claim(ClaimTypes.Role, user.Rol.Nombre)
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -156,9 +154,7 @@ namespace Mispollos.Application.Services
                 Id = user.Id,
                 Nombre = user.Nombre,
                 Apellido = user.Apellido,
-                Correo = user.Correo,
-                IdTienda = user.IdTienda,
-                rol = user.Rol.Nombre,
+                NombreDeUsuario = user.NombreDeUsuario,
                 Token = tokenString,
             };
 

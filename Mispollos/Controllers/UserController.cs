@@ -58,18 +58,18 @@ namespace Mispollos.Controllers
 
         // Traer un usuario por token
         // GET api/<UserController>/5
-        [HttpGet("recuperar-clave/{token}")]
-        public Usuario GetByToken(Guid token)
-        {
-            return _service.GetUserByToken(token);
-        }
+        //[HttpGet("recuperar-clave/{token}")]
+        //public Usuario GetByToken(Guid token)
+        //{
+        //    return _service.GetUserByToken(token);
+        //}
 
         //Crear usuario
         // POST api/user
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Usuario usuario)
         {
-            Boolean repeatedEmail = _service.ValidateEmailExists(usuario.Correo);
+            Boolean repeatedEmail = _service.ValidateUserNameExists(usuario.NombreDeUsuario);
 
             if (!repeatedEmail)
             {
@@ -82,35 +82,35 @@ namespace Mispollos.Controllers
         }
 
         // POST api/<UserController>/empleado
-        [Authorize(Roles = Role.Admin)]
-        [HttpPost("empleado")]
-        public async Task<IActionResult> PostEmpleado([FromBody] Usuario usuario)
-        {
-            Boolean repeatedEmail = _service.ValidateEmailExists(usuario.Correo);
+        //[Authorize(Roles = Role.Admin)]
+        //[HttpPost("empleado")]
+        //public async Task<IActionResult> PostEmpleado([FromBody] Usuario usuario)
+        //{
+        //    Boolean repeatedEmail = _service.ValidateEmailExists(usuario.Correo);
 
-            if (!repeatedEmail)
-            {
-                await _service.CreateEmployee(usuario);
+        //    if (!repeatedEmail)
+        //    {
+        //        await _service.CreateEmployee(usuario);
 
-                return Ok();
-            }
+        //        return Ok();
+        //    }
 
-            return BadRequest(new { message = "El correo ya esta en uso" });
-        }
+        //    return BadRequest(new { message = "El correo ya esta en uso" });
+        //}
 
         // POST api/user/recuperar-cuenta
-        [HttpPost("recuperar-cuenta")]
-        public async Task<IActionResult> PostRecuperarCuenta([FromBody] RecoverPasswordEmail email)
-        {
-            Boolean emailExists = _service.ValidateEmailExists(email.Email);
+        //[HttpPost("recuperar-cuenta")]
+        //public async Task<IActionResult> PostRecuperarCuenta([FromBody] RecoverPasswordEmail email)
+        //{
+        //    Boolean emailExists = _service.ValidateEmailExists(email.Email);
 
-            if (emailExists)
-            {
-                await _service.RecoverAccount(email);
-                return Ok();
-            }
-            return BadRequest(new { message = "El correo no existe" });
-        }
+        //    if (emailExists)
+        //    {
+        //        await _service.RecoverAccount(email);
+        //        return Ok();
+        //    }
+        //    return BadRequest(new { message = "El correo no existe" });
+        //}
 
         // POST api/user/authenticate
         [HttpPost("authenticate")]
@@ -120,7 +120,7 @@ namespace Mispollos.Controllers
 
             if (user == null)
             {
-                return BadRequest(new { message = "El correo o clave son incorrectos" });
+                return BadRequest(new { message = "El nombre de usuario o clave son incorrectos" });
             }
 
             AuthenticatedUserInfo authenticatedUserInfo = _service.GenerateJwt(user);

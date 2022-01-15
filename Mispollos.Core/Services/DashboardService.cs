@@ -142,7 +142,8 @@ namespace Mispollos.Application.Services
 
         public int TotalEmployees()
         {
-            return _userService.Query(x => x.Rol.Nombre == "Usuario").Count();
+            //return _userService.Query(x => x.Rol.Nombre == "Usuario").Count();
+            return 0;
         }
     }
 }

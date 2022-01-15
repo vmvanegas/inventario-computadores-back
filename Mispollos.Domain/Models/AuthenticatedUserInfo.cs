@@ -10,9 +10,7 @@ namespace Mispollos.Domain.Models
         public string Nombre { get; set; }
 
         public string Apellido { get; set; }
-        public string Correo { get; set; }
-        public Guid IdTienda { get; set; }
-        public string rol { get; set; }
+        public string NombreDeUsuario { get; set; }
         public string Token { get; set; }
     }
 }

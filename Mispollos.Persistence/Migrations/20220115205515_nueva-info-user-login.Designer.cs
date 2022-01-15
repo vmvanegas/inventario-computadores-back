@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Mispollos.Persistence;
 
 namespace Mispollos.Persistence.Migrations
 {
     [DbContext(typeof(MisPollosContext))]
-    partial class MisPollosContextModelSnapshot : ModelSnapshot
+    [Migration("20220115205515_nueva-info-user-login")]
+    partial class nuevainfouserlogin
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

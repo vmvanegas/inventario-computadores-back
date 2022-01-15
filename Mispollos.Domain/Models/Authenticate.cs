@@ -7,7 +7,7 @@ namespace Mispollos.Domain.Models
 {
     public class Authenticate
     {
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public string NombreDeUsuario { get; set; }
+        public string Clave { get; set; }
     }
 }
